@@ -1,0 +1,34 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+{% if not detail_of_author %}
+<p>
+      No detail for this author yet
+</p>
+{% else %}
+<h3>
+      Author: {{ detail_of_author }}
+</h3>
+{% load static %}
+<img src="{% static 'catalog/images/authors/Screenshot.png' %}" alt="Author's image" width="150" height="100">
+<small>
+      {{ detail_of_author.date_of_birth}} - {{ detail_of_author.date_of_death}}
+</small>
+<br>
+<br>
+<h4>Books</h4>
+{% for book in detail_of_author.book_set.all %}
+<div>
+      <h5>
+            <a href="{{ book.get_absolute_url }}" style="display: inline;">
+                  {{ book.title }}
+            </a>
+            <span style="font-weight: bold;">({{ book.bookinstance_set.all.count }})</span>
+      </h5>
+      <p>
+            {{ book.summary }}
+      </p>
+</div>
+<hr>
+{% endfor %}
+{% endif %}
+{% endblock main_content %}

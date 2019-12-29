@@ -1,0 +1,7 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+<p>Logged out!</p>
+<a href="{% url 'login' %}">
+      Click here to Login again.
+</a>
+{% endblock main_content %}

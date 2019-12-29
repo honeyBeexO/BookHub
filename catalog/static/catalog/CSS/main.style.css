@@ -1,0 +1,11 @@
+.sidebar-nav{
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+}
+
+
+#reset:hover{
+      transition: all .2s;
+      background-color: rgba(10, 50, 150, 0.9);
+}

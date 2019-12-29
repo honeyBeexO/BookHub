@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+
+{% block main_content %}
+<h2>
+      My Borrowed Books:
+</h2>
+{% if loanedBooks %}
+<ul>
+      {% for book in loanedBooks %}
+      <li class="{% if book.is_overdue %}text-danger{% endif %}">
+            <a href="{% url 'book-detail' book.book.pk %}">
+                  {{ book.book.title }}
+            </a>
+            {{ book.due_back }}
+      </li>
+      {% endfor %}
+      {% block staff_content %}
+      {% endblock staff_content %}
+</ul>
+{% else %}
+<p>
+      There is no books to show.
+</p>
+{% endif %}
+{% endblock main_content %}

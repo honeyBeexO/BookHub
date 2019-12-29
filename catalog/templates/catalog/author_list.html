@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+<div>
+      Number of authors: <h4>{{ num_auth }}</h4>
+</div>
+<div>
+      {% if list_all_authors %}
+      <ul>
+            {% for author in list_all_authors %}
+            <li>
+                  <a href="{{ author.get_absolute_url }}">
+                        {{ author }} ({{ author.date_of_birth }} {% if author.date_of_death %}
+                        - {{ author.date_of_death }}
+                        {% endif %})
+                  </a>
+            </li>
+            <hr>
+            {% endfor %}
+      </ul>
+      {% else %}
+      <p>No author is Available</p>
+      {% endif %}
+</div>
+{% endblock main_content %}

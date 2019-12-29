@@ -1,0 +1,64 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+<div>
+      <h3>Title: {{ detail_of_book.title }}</h3>
+      <p>
+            <strong>
+                  <small style="margin-right: 5em; text-align: left;">Author:</small> <a href="{{ detail_of_book.author.get_absolute_url }}">
+                        {{ detail_of_book.author }}
+                  </a>
+            </strong>
+      </p>
+      <p>
+            <strong>
+                  <small style="margin-right: 5em; text-align: left;">Language:</small>{{ detail_of_book.language }}
+            </strong>
+      </p>
+      <p>
+            <strong>
+                  <small style="margin-right: 5em; text-align: left;">ISBN:</small>{{ detail_of_book.isbn }}
+            </strong>
+      </p>
+      <p>
+            <strong>
+                  <small
+                        style="margin-right: 5em; text-align: left;">Genre:</small>{{ detail_of_book.genre.all|join:", " }}
+            </strong>
+      </p>
+</div>
+<div>
+      {% if detail_of_book.bookinstance_set.all.count != 0 %}
+      {% for copy in detail_of_book.bookinstance_set.all %}
+      <hr>
+      <p
+            class=" {% if copy.status == 'a' %}text-success {% elif copy.status == 'm' %}text-danger {% else %}text-warning {% endif %}">
+            {{ copy.get_status_display }}
+      </p>
+      {% if copy.status != 'a' %}
+      <p>
+            <strong>
+                  Due to be returned:
+            </strong>
+            {{ copy.due_back }}
+      </p>
+      {% endif %}
+      <p>
+            <strong>
+                  Imprint:
+            </strong>
+            {{ copy.imprint }}
+      </p>
+      <p class="text-muted">
+            <strong>
+                  Id:
+            </strong>
+            {{ copy.id }}
+      </p>
+      {% endfor %}
+      {% else %}
+      <p>
+            No Available copies for this book.
+      </p>
+      {% endif %}
+</div>
+{% endblock main_content %}
