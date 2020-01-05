@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # By default for sessions data are stored on the DB
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'flatpickr',  # To use the calendar in a wdiget date field
 ]
 
 MIDDLEWARE = [

@@ -1,3 +1,18 @@
+from django.urls import reverse_lazy
+from catalog.models import Author
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+
+from catalog.forms import renew_book_ModelForm
+from django.utils.translation import ugettext_lazy as _
+from catalog.forms import RenewBookForm
+import datetime
+from django.contrib.auth.decorators import permission_required
+
+from django.shortcuts import get_object_or_404   # for the form handling
+from django.http import HttpResponseRedirect    # for the form handling
+from django.urls import reverse                 # for the form handling
+
 # to make the view available for the only logged in users
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -40,6 +55,7 @@ def index(request):
         'title': 'bookHub',
         # session calculation
         'num_visits': num_visits,
+        'home_page': 'active',
     }
     return render(request, 'catalog/index.html', context=context)
 
@@ -69,6 +85,7 @@ class BookListView(generic.ListView):
         # add data to the context
         context['title'] = 'All Books -from get_context-'
         context['num_books'] = self.num
+        context['books_page'] = 'active'
         return context
 
 
@@ -85,7 +102,7 @@ class BookDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Book's Details"
-        #context["instances"] = BookInstance.objects.filter(book__id__in=[1, 2, 3, 4, 5, 6])
+        # context["instances"] = BookInstance.objects.filter(book__id__in=[1, 2, 3, 4, 5, 6])
         return context
 
 
@@ -115,7 +132,8 @@ class AuthorListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Authors'
         context['num_auth'] = self.num_auth
-        #context['data'] = self.model.objects.all()
+        context["authors_page"] = "active"
+        # context['data'] = self.model.objects.all()
         return context
 
     def get_queryset(self):
@@ -143,6 +161,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Loaned Books'
+        context['user_books'] = 'active'
         return context
 
     def get_queryset(self):
@@ -151,14 +170,107 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
 
 class AllLoanedBooksListView(LoginRequiredMixin, generic.ListView):
     model = BookInstance
-    paginated_by = 5
+    paginate_by = 6
     context_object_name = 'allBooksOnLoan'
     template_name = 'catalog/bookinstance_list_borrowed_all_users.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'All Loaned Books'
+        context['all_users_books'] = 'active'
         return context
 
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
+
+
+"""
+@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_edit')
+def renew_book_librarian(request, primaryKey):
+    book_instance = get_object_or_404(BookInstance, pk=primaryKey)
+    print(book_instance)
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request (binding):
+        form = RenewBookForm(request.POST)
+        # Check if the form is valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
+            book_instance.due_back = form.cleaned_data['renewal_date']
+            book_instance.save()
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('all-brrowed'))
+        else:
+            return render(request, 'catalog/book_renew_librarian.html', {'form': form})
+
+    # If this is a GET (or any other method) create the default form.
+    else:
+        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
+
+        context = {
+            'form': form,
+            'book_instance': book_instance,
+            'all_users_books': 'active',
+        }
+
+        return render(request, 'catalog/book_renew_librarian.html', context)
+
+"""
+
+
+@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_edit')
+def view_renew_book_ModelForm(request, primaryKey):
+    book_instance = get_object_or_404(BookInstance, pk=primaryKey)
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request (binding):
+        form = renew_book_ModelForm(request.POST)
+        # Check if the form is valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
+            book_instance.due_back = form.cleaned_data['due_back']
+            book_instance.save()
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('all-brrowed'))
+        else:
+            return render(request, 'catalog/book_renew_librarian.html', {'form': form})
+
+    # If this is a GET (or any other method) create the default form.
+    else:
+        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+        form = renew_book_ModelForm(
+            initial={'due_back': proposed_renewal_date})
+
+    context = {
+        'form': form,
+        'book_instance': book_instance,
+        'all_users_books': 'active',
+    }
+
+    return render(request, 'catalog/book_renew_librarian.html', context)
+
+
+# Generic editing views related to a model
+class AuthorCreate(CreateView):
+    model = Author
+    fields = '__all__'
+    initial = {
+        'date_of_death': '05/01/2018'
+    }
+
+
+class AuthorUpdate(UpdateView):
+    model = Author
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+
+
+class AuthorDelete(DeleteView):
+    model = Author
+    success_url = reverse_lazy('catalog_authors')
+
+
+def view_404(request, exception=None):
+    return HttpResponseNotFound()

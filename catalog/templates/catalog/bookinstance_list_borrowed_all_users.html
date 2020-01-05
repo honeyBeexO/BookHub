@@ -10,9 +10,13 @@
       <li class="{% if book.is_overdue %}text-danger{% endif %}">
             <a href="{% url 'book-detail' book.book.pk %}">
                   {{ book.book.title }}
+
             </a>
             ({{ book.due_back }}) {{ book.borrower }}
-            
+            {% if perms.catalog.can_mark_returned %}
+            ( <a href="{% url 'renew-book-librarian' book.id %}">Renew</a> )
+            {% endif %}
+
       </li>
       {% endfor %}
 </ul>

@@ -20,13 +20,105 @@
             integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
       <!-- Additional CSS styling -->
-      <link rel="stylesheet" type="text/css" href=" {% static 'cataloge/CSS/main.style.css' %} ">
+      <link rel="stylesheet" type="text/css" href=" {% static 'catalog/CSS/main.style.css' %} ">
 
       <style>
+            *,
+            *::after,
+            *::before {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+            }
+
             .active {
                   font-weight: bold;
                   text-decoration: underline;
                   color: rgba(247, 214, 26, 0.831);
+            }
+
+            ul {
+                  list-style-type: none;
+            }
+
+            nav {
+                  width: 80vw;
+                  height: 8vh;
+                  margin: auto;
+            }
+
+            .nav-wrapper {
+                  width: 100%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  flex-wrap: wrap;
+            }
+
+            .nav-wrapper li {
+                  margin: 8px;
+            }
+
+            .right-nav {
+                  width: 40%;
+            }
+
+            .left-nav {
+                  width: 60%;
+            }
+
+            .main-content {
+                  display: grid;
+                  grid-template-columns: 50px 1fr;
+                  grid-auto-rows: 1fr;
+                  gap: 1em;
+                  align-items: center;
+                  justify-content: space-between;
+            }
+
+            aside {
+                  margin: 1em 1em 1em 0.1em;
+                  grid-column: 1;
+            }
+
+            .landing {
+                  grid-column: 2;
+                  margin: 5em 0 1em 5em;
+                  background-color: white;
+                  box-shadow: rgba(9, 30, 66, 0.28) 0px 4px 8px -2px, rgba(9, 30, 66, 0.3) 0px 0px 1px;
+                  border: 1px solid rgb(233, 228, 228);
+
+            }
+
+
+            .username {
+                  text-align: center;
+                  font-weight: 400;
+                  font-size: 1.3em;
+                  text-transform: uppercase;
+                  letter-spacing: 2px;
+                  position: relative;
+                  left: 0;
+                  border: solid 1px rgb(219, 213, 213);
+                  box-shadow: rgba(9, 30, 66, 0.28) 0px 4px 8px -2px, rgba(9, 30, 66, 0.3) 0px 0px 1px;
+                  border-radius: 50px;
+            }
+
+            hr {
+                  color: rgb(10, 50, 150);
+                  border: solid rgb(10, 50, 150)s 3px;
+            }
+
+            .submit-btn {
+                  background-color: rgba(10, 50, 150, 0.9);
+                  color: white;
+                  box-shadow: 10px 9px 6px -9px rgba(0, 0, 0, 0.75);
+                  border: 1px solid white;
+                  border-radius: 50px;
+                  width: 60px;
+                  height: 30px;
+                  margin: 1em;
+
             }
       </style>
 
@@ -34,77 +126,95 @@
 
 
 <body>
-      <div class="container-fluid">
+      <div class="container">
             <div class="row">
                   <div class="col-sm-2">
                         {% block sidebar %}
-                        <nav>
-                              <ul class="sidebar-nav">
-                                    <li>
-                                          <a href="{% url 'catalog_index' %}" class="active">Home</a>
+                        <nav class="nav navbar">
+                              <ul class="nav-wrapper left-nav" id="navTop">
+                                    <li class="">
+                                          <a href="{% url 'catalog_index' %}" class="nav-link {{home_page}}">Home</a>
                                     </li>
                                     <li>
-                                          <a href="{% url 'catalog_books' %}">Books</a>
+                                          <a href="{% url 'catalog_books' %}" class="nav-link {{books_page}}">Books</a>
                                     </li>
                                     <li>
-                                          <a href="{% url 'catalog_authors' %}">Authors</a>
+                                          <a href="{% url 'catalog_authors' %}"
+                                                class="nav-link {{authors_page}}">Authors</a>
+                                    </li>
+                              </ul>
+
+                              <ul class="nav-wrapper right-nav">
+                                    {% if user.is_authenticated %}
+                                    <li class="username">
+                                          {{user.get_username}}
                                     </li>
 
-                                    {% if user.is_authenticated %}
-                                    <li><br></li>
-                                    <li>User: {{user.get_username}}</li>
-                                    <li><a href="{% url 'user-books' %}">My Books</a> </li>
-                                    {% if user.is_staff %}
                                     <li>
-                                          <hr>
-                                          <h5>Staff</h5>
-                                          <a href="{% url 'all-brrowed' %}">All Borrowed</a>
-                                    </li>
-                                    {% endif %}
-                                    <li>
-                                          <a href="{% url 'logout' %}?next={{request.path}}">Logout</a>
+                                          <a href="{% url 'logout' %}?next={{request.path}} "
+                                                class="nav-link">Logout</a>
                                     </li>
                                     {% else %}
                                     <li>
-                                          <a href="{% url 'login' %}?next={{request.path}}">Login</a>
-                                    </li>
+                                          <a href="{% url 'login' %}?next={{request.path}}" class="nav-link">Login</a>
+                                    </li class="nav-link">
                                     {% endif %}
                               </ul>
                         </nav>
                         {% endblock %}
                   </div>
             </div>
+            <div class="main-content">
+                  <aside>
+                        {% if user.is_authenticated %}
+                        <ul>
+                              <li>
+                                    <a href="{% url 'user-books' %}" class="nav-link {{user_books}}">My Books
 
-            <div class="col-sm-10 ">
-                  {% block main_content %}
+                                    </a>
+                              </li>
 
-                  {% endblock main_content %}
-
-                  {% block pagination %}
-                  {% if is_paginated %}
-                  <div class="pagination">
-                        <span class="page-links">
-                              {% if page_obj.has_previous %}
-                              <a href="{{ request.path }}?page={{ page_obj.previous_page_number }} ">
-                                    Previous
-                              </a>
+                              {% if user.is_superuser %}
+                              <li>
+                                    <h5>{% if user.is_admin%} ADMIN {% else %}STAFF {% endif %}</h5>
+                                    <a href="{% url 'all-brrowed' %}" class="nav-link {{all_users_books}}">All
+                                          Borrowed</a>
+                                    <hr>
+                              </li>
                               {% endif %}
-                              <span class="page-current">
-                                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </ul>
+                        {% endif %}
+                  </aside>
+                  <div class="col-sm-10 landing">
+                        {% block main_content %}
+
+                        {% endblock main_content %}
+
+                        {% block pagination %}
+                        {% if is_paginated %}
+                        <div class="pagination">
+                              <span class="page-links">
+                                    {% if page_obj.has_previous %}
+                                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }} ">
+                                          Previous
+                                    </a>
+                                    {% endif %}
+                                    <span class="page-current">
+                                          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                    </span>
+                                    {% if page_obj.has_next %}
+                                    <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">
+                                          Next
+                                    </a>
+                                    {% endif %}
                               </span>
-                              {% if page_obj.has_next %}
-                              <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">
-                                    Next
-                              </a>
-                              {% endif %}
-                        </span>
+                        </div>
+                        {% endif %}
+                        {% endblock pagination %}
                   </div>
-                  {% endif %}
-                  {% endblock pagination %}
             </div>
-      </div>
-      </div>
 
+      </div>
       <!--  Bootstarp javascript and jquery -->
       <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
             integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -115,6 +225,7 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
+
 </body>
 
 </html>

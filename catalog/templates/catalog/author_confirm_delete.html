@@ -1,0 +1,17 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+{% if user.is_authenticated %}
+{% if user.is_staff %}
+<h1>
+      Delete Author
+</h1>
+<p>
+      Are you sure you want to delete the author: {{author}}?
+</p>
+<form action="" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="Yes, delete." class="submit-btn">
+</form>
+{% endif %}
+{% endif %}
+{% endblock main_content %}

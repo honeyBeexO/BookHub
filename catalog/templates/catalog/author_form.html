@@ -1,0 +1,14 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+{% if user.is_authenticated %}
+{% if user.is_staff %}
+<form action="" method="POST">
+      {% csrf_token %}
+      {{form.as_p}}
+      <input type="submit" value="Submit">
+</form>
+{% else %}
+
+{% endif %}
+{% endif %}
+{% endblock main_content %}

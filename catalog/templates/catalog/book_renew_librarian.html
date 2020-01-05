@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+{{ form.media }}
+<h1 style="margin-left:2em;">Renew: {{ book_instance.book.title }}</h1>
+<h6>Borrower: {{ book_instance.borrower }}</h6>
+<p {% if book.instance.is_overdue %} class="text-danger" {% endif %}>
+      Current Due Date: <h3 style="font-weight: bold; color:brown; display: inline-block; ">{{ book_instance.due_back }}
+      </h3>
+</p>
+<form action="" method="POST">
+      {% csrf_token %}
+      <table>
+            <tr>
+                  <td>
+
+                        <label for="renewal-date">
+                              Renewal date:
+                        </label>
+                        {{form.due_back}}
+                        {% if form.due_back.errors %}
+                        <ul>
+                        {% for error in form.due_back.errors %}
+                              <li>
+                              {{ error }}
+                              </li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <span class="helptext">
+                              {{ form.due_back.help_text }} </span>
+                  </td>
+
+            </tr>
+            <tr>
+                  <td>
+                        <button type="submit" value="submit" class="submit-btn">
+                        submit
+                        </button>
+                  </td>
+            </tr>
+      </table>
+
+</form>
+{% endblock main_content %}
