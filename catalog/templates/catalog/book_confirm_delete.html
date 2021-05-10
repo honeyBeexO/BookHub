@@ -1,0 +1,10 @@
+{% extends 'catalog/base.html' %}
+{% block main_content %}
+<h1>Are sure to Delete {{book}}? </h1>
+<form action="" method="POST">
+      {% csrf_token %}
+      <fieldset>
+            <input type="submit" value="Yes, delete." class="submit-btn" style="width: 150px;">
+      </fieldset>
+</form>
+{% endblock main_content %}

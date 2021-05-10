@@ -1,3 +1,6 @@
+from django.template import RequestContext
+
+from .models import Book
 from django.urls import reverse_lazy
 from catalog.models import Author
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -272,5 +275,31 @@ class AuthorDelete(DeleteView):
     success_url = reverse_lazy('catalog_authors')
 
 
-def view_404(request, exception=None):
-    return HttpResponseNotFound()
+class BookCreate(CreateView):
+    model = Book
+    fields = '__all__'
+
+
+class BookUpdate(UpdateView):
+    model = Book
+    fields = [
+        'title', 'summary', 'isbn', 'language', 'genre'
+    ]
+    initial = {
+        'isbn': 00000000000,
+    }
+
+
+class BookDelete(DeleteView):
+    model = Book
+    success_url = reverse_lazy('catalog_books')
+
+
+def error_404(request, exception):
+    data = {}
+    return render(request, 'catalog/404.html', status=404)
+
+
+def error_500(request):
+    data = {}
+    return render(request, 'catalog/500.html', status=500)

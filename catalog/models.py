@@ -57,7 +57,7 @@ class Book(models.Model):
     def display_genre(self):
         #g = ''
         # for genre in self.genre.all():
-            #g.join(genre.name).join(', ')
+        #g.join(genre.name).join(', ')
         return ', '.join(genre.name for genre in self.genre.all()[:3])
         print(g)
 

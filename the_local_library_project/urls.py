@@ -1,4 +1,3 @@
-
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
@@ -22,3 +21,9 @@ urlpatterns += [
 
 # add static files directories to the path
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+handler404 = 'catalog.views.error_404'
+handler500 = 'catalog.views.error_500'
+#handler403 = 'catalog.views.error_403'
+#handler400 = 'catalog.views.error_400'
